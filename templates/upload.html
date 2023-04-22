@@ -7,4 +7,32 @@
   {{ form.as_p }}
   <button type="submit">Upload</button>
 </form>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Training Progress</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      setInterval(function() {
+        $.getJSON('/get_training_progress/', function(data) {
+          $('#epoch').text(data.epoch);
+          $('#batch').text(data.batch);
+          $('#loss').text(data.loss);
+          $('#accuracy').text(data.acc);
+        });
+      }, 1000); // update the progress every 1 second
+    });
+  </script>
+</head>
+<body>
+  <h1>Training Progress</h1>
+  <p>Epoch: <span id="epoch">0</span></p>
+  <p>Batch: <span id="batch">0</span></p>
+  <p>Loss: <span id="loss">0.0</span></p>
+  <p>Accuracy: <span id="accuracy">0.0</span></p>
+</body>
+</html>
+
 {% endblock %}
