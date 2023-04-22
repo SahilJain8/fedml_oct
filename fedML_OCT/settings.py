@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2bxg3gna-agf@#lgl#$@jyn*xan5=fn6=-2#646*n2oxfyox8x'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -79,9 +79,8 @@ DATABASES = {
         'ENGINE': 'djongo',
         'NAME': 'fedml',
         'CLIENT': {
-            'host': 'mongodb+srv://root:6u1jPRiUjEY7G4tx@cluster0.chilgc4.mongodb.net/test',
-            'username':'root',
-            'password':'6u1jPRiUjEY7G4tx'
+            'host': os.getenv('DATABASE_HOST')
+          
             
         },
     }
