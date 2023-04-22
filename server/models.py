@@ -1,17 +1,18 @@
 from django.db import models
-
-# Create your models here.
-
 import numpy as np
 
-class MyCollection(models.Model):
-    user_name = models.CharField(max_length=100)
-    user_id = models.IntegerField()
-    model_weights = models.BinaryField()
-    time = models.DateTimeField()
+import json
 
-    def set_weights(self, weights):
-        self.model_weights = np.array(weights).tobytes()
-        
-    def get_weights(self):
-        return np.frombuffer(self.model_weights)
+
+class model_data(models.Model):
+    user_name  = models.CharField(max_length=255)
+    user_id = models.IntegerField()
+    model_weights = models.JSONField()
+
+    @property
+    def array(self):
+        return np.array(json.loads(self.model_weights))
+    
+    @array.setter
+    def array(self, model_weights):
+        self.model_weights = json.dumps(model_weights.tolist())
