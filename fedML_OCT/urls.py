@@ -16,10 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from client.views import upload_images
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include("server.urls")),
-    path('image/',upload_images)
+   
 ]
