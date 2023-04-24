@@ -1,13 +1,13 @@
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from keras.preprocessing.image import ImageDataGenerator
 
-# Define the image size and batch size
+
 IMG_SIZE = (224, 224)
 BATCH_SIZE = 32
 
 
-classes = ['class1', 'class2', 'class3', 'class4']
+classes = ['Choroidal neovascularization', 'Diabetic macular edema', 'Optic disc drusen ', 'Normal ']
 
 
 image_data_generator = ImageDataGenerator(
@@ -15,9 +15,9 @@ image_data_generator = ImageDataGenerator(
     validation_split=0.2
 )
 
-# Define a function to create a dataset from a list of images
+
 def create_dataset(image_lists, subset):
-    # Create a list of (image, label) pairs
+   
     image_label_pairs = []
     for class_index, image_list in enumerate(image_lists):
         for image in image_list:
