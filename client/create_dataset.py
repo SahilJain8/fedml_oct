@@ -36,3 +36,10 @@ def create_dataset(images):
     dataset = dataset.shuffle(buffer_size=len(image_arrays))
     
     return dataset
+
+
+def train_model(class1_images,class2_images,class3_images,class4_images):
+    class1_dataset = create_dataset(class1_images)
+    class2_dataset = create_dataset(class2_images)
+    class3_dataset = create_dataset(class3_images)
+    class4_dataset = create_dataset(class4_images)
