@@ -37,9 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'server',
-    'client'
- 
+
+
 ]
 
 MIDDLEWARE = [
@@ -81,8 +80,8 @@ DATABASES = {
         'NAME': 'fedml',
         'CLIENT': {
             'host': os.getenv('DATABASE_HOST')
-          
-            
+
+
         },
     }
 }
