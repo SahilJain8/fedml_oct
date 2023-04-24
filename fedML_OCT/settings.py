@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'fedML_OCT.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'fedml_ocr',
+        'NAME': 'fedml_cor',
         'CLIENT': {
             'host': os.getenv('DATABASE_HOST')
           
