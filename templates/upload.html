@@ -1,19 +1,74 @@
+<!DOCTYPE html>
 <html>
-<title>
-
-Uplaod the images
-
-</title>
-<body>
-  <h2>Upload Images</h2>
-  <form method="post" enctype="multipart/form-data" >
-    {% csrf_token %}
-  <label style="text-align: center;">Images
-<input  required name="images" type="file" multiple="multiple">
- </label>
-
-
-    <button type="submit">Upload</button>
-  </form>
-</body>
-  </html>
+  <head>
+    <title>Upload Images</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f2f2f2;
+      }
+      
+      h1 {
+        text-align: center;
+        margin-top: 20px;
+        margin-bottom: 40px;
+      }
+      
+      form {
+        background-color: #fff;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 40px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+      
+      input[type="file"] {
+        display: block;
+        margin-bottom: 10px;
+      }
+      
+      input[type="submit"] {
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      
+      input[type="submit"]:hover {
+        background-color: #3e8e41;
+      }
+      
+      h2 {
+        font-size: 18px;
+        margin-top: 30px;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Upload Images</h1>
+    <form  method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <h2>Choroidal neovascularizatio</h2>
+      <input type="file" name="class1[]" multiple><br><br>
+      
+      <h2>Diabetic macular edema/h2>
+      <input type="file" name="class2[]" multiple><br><br>
+      
+      <h2>Optic disc drusen </h2>
+      <input type="file" name="class3[]" multiple><br><br>
+      
+      <h2>Normal </h2>
+      <input type="file" name="class4[]" multiple><br><br>
+      
+      <input type="submit" value="Upload Images">
+    </form>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
@@ -8,6 +8,10 @@ def index(request):
     
 def upload(request):
     if request.method =="POST":
-        image = request.FILES.get('images')
-        print(image)
+            class1_images = request.FILES.getlist('class1[]')
+            class2_images = request.FILES.getlist('class2[]')
+            class3_images = request.FILES.getlist('class3[]')
+            class4_images = request.FILES.getlist('class4[]')
+            return HttpResponse("Image upload succesfully")
+            
     return render(request,"upload.html")
