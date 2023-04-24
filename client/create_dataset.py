@@ -1,45 +1,39 @@
 import tensorflow as tf
 import numpy as np
-from keras.preprocessing.image import ImageDataGenerator
+from PIL import Image
 
 
-IMG_SIZE = (224, 224)
+IMG_SIZE = (150, 150)
 BATCH_SIZE = 32
 
 
 classes = ['Choroidal neovascularization', 'Diabetic macular edema', 'Optic disc drusen ', 'Normal ']
 
 
-image_data_generator = ImageDataGenerator(
-    rescale=1./255,
-    validation_split=0.2
-)
+def create_dataset(image_lists):
+    
+    IMG_HEIGHT = 150
+    IMG_WIDTH = 150
 
 
-def create_dataset(image_lists, subset):
+    labels = [0]*len(image_lists[0]) + [1]*len(image_lists[1]) + [2]*len(image_lists[2]) + [3]*len(image_lists[3])
+
    
-    image_label_pairs = []
-    for class_index, image_list in enumerate(image_lists):
-        for image in image_list:
-            image_label_pairs.append((image, class_index))
-    
-   
-    np.random.shuffle(image_label_pairs)
-    
-   
-    image_paths = [pair[0] for pair in image_label_pairs]
-    labels = [pair[1] for pair in image_label_pairs]
-    dataset = tf.data.Dataset.from_tensor_slices((image_paths, labels))
-    
+    images = []
+    for img_list in image_lists:
+        images += img_list
+
+ 
+    def preprocess_image(image):
+     
+        image = tf.image.convert_image_dtype(image, tf.float32)
+     
+        image = tf.image.resize(image, [IMG_HEIGHT, IMG_WIDTH])
+        return image
+
   
-    generator = image_data_generator.flow_from_dataframe(
-        dataframe=tf.data.Dataset.zip((dataset, tf.data.Dataset.range(len(image_paths)))).shuffle(buffer_size=len(image_paths)),
-        x_col=0, y_col=1,
-        target_size=IMG_SIZE,
-        batch_size=BATCH_SIZE,
-        subset=subset
-    )
+    dataset = tf.data.Dataset.from_tensor_slices((images, labels))
+
+    dataset = dataset.map(lambda x, y: (preprocess_image(x), y))
     
-    return generator
-
-
+    return dataset
