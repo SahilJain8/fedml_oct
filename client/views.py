@@ -20,6 +20,7 @@ def upload(request):
             
             all_classes_train_dataset = create_dataset(image_lists, 'training')
             all_classes_val_dataset = create_dataset(image_lists, 'validation')
+            
 
 
             return HttpResponse("Image upload succesfully")
