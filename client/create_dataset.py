@@ -1,45 +1,45 @@
 import tensorflow as tf
 import numpy as np
-from PIL import Image
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-
+# Define the image size and batch size
 IMG_SIZE = (224, 224)
 BATCH_SIZE = 32
 
 
+classes = ['class1', 'class2', 'class3', 'class4']
 
-def preprocess_image(image):
- 
-    img = Image.open(image)
+
+image_data_generator = ImageDataGenerator(
+    rescale=1./255,
+    validation_split=0.2
+)
+
+# Define a function to create a dataset from a list of images
+def create_dataset(image_lists, subset):
+    # Create a list of (image, label) pairs
+    image_label_pairs = []
+    for class_index, image_list in enumerate(image_lists):
+        for image in image_list:
+            image_label_pairs.append((image, class_index))
     
    
-    img = img.resize(IMG_SIZE)
+    np.random.shuffle(image_label_pairs)
     
- 
-    img_array = np.array(img)
+   
+    image_paths = [pair[0] for pair in image_label_pairs]
+    labels = [pair[1] for pair in image_label_pairs]
+    dataset = tf.data.Dataset.from_tensor_slices((image_paths, labels))
     
-
-    img_array = img_array / 255.0
-    
-    return img_array
-
-
-def create_dataset(images):
   
-    image_arrays = [preprocess_image(image) for image in images]
+    generator = image_data_generator.flow_from_dataframe(
+        dataframe=tf.data.Dataset.zip((dataset, tf.data.Dataset.range(len(image_paths)))).shuffle(buffer_size=len(image_paths)),
+        x_col=0, y_col=1,
+        target_size=IMG_SIZE,
+        batch_size=BATCH_SIZE,
+        subset=subset
+    )
     
+    return generator
 
-    dataset = tf.data.Dataset.from_tensor_slices(image_arrays)
-    
-    
-    dataset = dataset.batch(BATCH_SIZE)
-    dataset = dataset.shuffle(buffer_size=len(image_arrays))
-    
-    return dataset
 
-
-def train_model(class1_images,class2_images,class3_images,class4_images):
-    class1_dataset = create_dataset(class1_images)
-    class2_dataset = create_dataset(class2_images)
-    class3_dataset = create_dataset(class3_images)
-    class4_dataset = create_dataset(class4_images)

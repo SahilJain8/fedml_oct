@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .create_dataset import train_model
+from .create_dataset import create_dataset
 
 # Create your views here.
 def index(request):
@@ -9,13 +9,17 @@ def index(request):
     
 def upload(request):
     if request.method =="POST":
-            class1_images = request.FILES.getlist('class1[]')
-            class2_images = request.FILES.getlist('class2[]')
-            class3_images = request.FILES.getlist('class3[]')
-            class4_images = request.FILES.getlist('class4[]')
+            image_lists = [
+    request.FILES.getlist('class1[]'),
+    request.FILES.getlist('class2[]'),
+    request.FILES.getlist('class3[]'),
+    request.FILES.getlist('class4[]')
+]
+
           
-            train_model(class1_images,class2_images,class3_images,class4_images)
-    
+            
+            all_classes_train_dataset = create_dataset(image_lists, 'training')
+            all_classes_val_dataset = create_dataset(image_lists, 'validation')
 
 
             return HttpResponse("Image upload succesfully")
