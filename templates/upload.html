@@ -1,74 +1,44 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Upload Images</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f2f2f2;
-      }
-      
-      h1 {
-        text-align: center;
-        margin-top: 20px;
-        margin-bottom: 40px;
-      }
-      
-      form {
-        background-color: #fff;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 40px;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      }
-      
-      input[type="file"] {
-        display: block;
-        margin-bottom: 10px;
-      }
-      
-      input[type="submit"] {
-        background-color: #4CAF50;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-      }
-      
-      input[type="submit"]:hover {
-        background-color: #3e8e41;
-      }
-      
-      h2 {
-        font-size: 18px;
-        margin-top: 30px;
-        margin-bottom: 10px;
-      }
+        body {
+            font-family: Arial, sans-serif;
+        }
+        form {
+            margin: 20px auto;
+            width: 500px;
+        }
+        input[type=file] {
+            margin: 10px 0;
+        }
+        input[type=submit] {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type=submit]:hover {
+            background-color: #3E8E41;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <h1>Upload Images</h1>
-    <form  method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      
-      <h2>Choroidal neovascularization</h2>
-      <input type="file" name="class1[]" multiple><br><br>
-      
-      <h2>Diabetic macular edema/h2>
-      <input type="file" name="class2[]" multiple><br><br>
-      
-      <h2>Optic disc drusen </h2>
-      <input type="file" name="class3[]" multiple><br><br>
-      
-      <h2>Normal </h2>
-      <input type="file" name="class4[]" multiple><br><br>
-      
-      <input type="submit" value="Upload Images">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h2>Class 1</h2>
+        {{ form.images_1 }}
+        <h2>Class 2</h2>
+        {{ form.images_2 }}
+        <h2>Class 3</h2>
+        {{ form.images_3 }}
+        <h2>Class 4</h2>
+        {{ form.images_4 }}
+        <input type="submit" value="Upload">
     </form>
-  </body>
+</body>
 </html>

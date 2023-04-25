@@ -1,10 +1,10 @@
 
 from django.urls import path
-from .views import index,upload
+from .views import upload
 
 
 urlpatterns = [
-    path("",index),
+   
     path("image/",upload)
     
    

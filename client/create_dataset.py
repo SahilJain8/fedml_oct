@@ -1,39 +1,50 @@
 import tensorflow as tf
 import numpy as np
-from PIL import Image
+from keras.preprocessing.image import ImageDataGenerator
 
 
-IMG_SIZE = (150, 150)
+IMG_SIZE = (224, 224)
 BATCH_SIZE = 32
 
 
-classes = ['Choroidal neovascularization', 'Diabetic macular edema', 'Optic disc drusen ', 'Normal ']
+classes = ['class1', 'class2', 'class3', 'class4']
 
 
-def create_dataset(image_lists):
-    
-    IMG_HEIGHT = 150
-    IMG_WIDTH = 150
+image_data_generator = ImageDataGenerator(
+    rescale=1./255,
+    validation_split=0.2
+)
 
 
-    labels = [0]*len(image_lists[0]) + [1]*len(image_lists[1]) + [2]*len(image_lists[2]) + [3]*len(image_lists[3])
-
+def preprocess_image(image):
    
-    images = []
-    for img_list in image_lists:
-        images += img_list
-
+    img = tf.io.decode_image(image.read(), channels=3)
+   
+    img = tf.image.resize(img, IMG_SIZE)
  
-    def preprocess_image(image):
-     
-        image = tf.image.convert_image_dtype(image, tf.float32)
-     
-        image = tf.image.resize(image, [IMG_HEIGHT, IMG_WIDTH])
-        return image
+    img = tf.cast(img, tf.float32) / 255.0
+    return img.numpy()
 
-  
+
+def create_dataset(image_lists, subset):
+
+    image_label_pairs = []
+    for class_index, image_list in enumerate(image_lists):
+        for image in image_list:
+            image_label_pairs.append((preprocess_image(image), class_index))
+    
+
+    np.random.shuffle(image_label_pairs)
+    
+    
+    images = [pair[0] for pair in image_label_pairs]
+    labels = [pair[1] for pair in image_label_pairs]
     dataset = tf.data.Dataset.from_tensor_slices((images, labels))
+    
 
-    dataset = dataset.map(lambda x, y: (preprocess_image(x), y))
+    dataset = dataset.batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
     
     return dataset
+
+
+
