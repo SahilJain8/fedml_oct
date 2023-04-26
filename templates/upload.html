@@ -1,44 +1,15 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
+    <meta charset="UTF-8">
     <title>Upload Images</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        form {
-            margin: 20px auto;
-            width: 500px;
-        }
-        input[type=file] {
-            margin: 10px 0;
-        }
-        input[type=submit] {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        input[type=submit]:hover {
-            background-color: #3E8E41;
-        }
-    </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Upload Images</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <h2>Class 1</h2>
-        {{ form.images_1 }}
-        <h2>Class 2</h2>
-        {{ form.images_2 }}
-        <h2>Class 3</h2>
-        {{ form.images_3 }}
-        <h2>Class 4</h2>
-        {{ form.images_4 }}
-        <input type="submit" value="Upload">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Upload</button>
     </form>
-</body>
+  </body>
 </html>
