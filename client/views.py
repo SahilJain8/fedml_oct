@@ -44,7 +44,6 @@ def upload(request):
            
             print(dataset)
 
-            # Return response
             return HttpResponse("Successfully uploaded images.")
     else:
         form = ImageUploadForm()
