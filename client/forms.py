@@ -1,23 +1,17 @@
 from django import forms
 
-class MultiCategoryImageForm(forms.Form):
-    CATEGORY_CHOICES = [
-        ('CNV', 'CNV'),
-        ('DME', 'DME'),
-        ('DRUSEN', 'DRUSEN'),
-        ('NORMAL', 'NORMAL')
+class ImageUploadForm(forms.Form):
+    CNV = 'CNV'
+    DME = 'DME'
+    DRUSEN = 'DRUSEN'
+    NORMAL = 'NORMAL'
+    CLASS_CHOICES = [
+        (CNV, 'CNV'),
+        (DME, 'DME'),
+        (DRUSEN, 'DRUSEN'),
+        (NORMAL, 'NORMAL'),
     ]
-    
-    CNV_images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}), required=False)
-    DME_images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}), required=False)
-    DRUSEN_images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}), required=False)
-    NORMAL_images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}), required=False)
-    
-    category = forms.ChoiceField(choices=CATEGORY_CHOICES)
-    
-    def clean(self):
-        cleaned_data = super().clean()
-        category = cleaned_data.get('category')
-        category_images = cleaned_data.get(f'{category}_images')
-        if not category_images:
-            raise forms.ValidationError(f'Please upload at least one image for category {category}.')
+    cnv_image = forms.ImageField(label='CNV Image', required=True)
+    dme_image = forms.ImageField(label='DME Image', required=True)
+    drusen_image = forms.ImageField(label='DRUSEN Image', required=True)
+    normal_image = forms.ImageField(label='NORMAL Image', required=True)
