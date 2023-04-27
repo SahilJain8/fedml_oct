@@ -5,6 +5,7 @@ from .forms import MultipleImagesForm
 from .utils import create_image,create_model
 import numpy as np
 import tensorflow as tf
+import threading
 
 
 
@@ -35,11 +36,10 @@ def upload_images(request):
 
             
             dataset = tf.data.Dataset.from_tensor_slices((dataset, labels))
-            model = create_model()
-            model.compile(optimizer='adam',
-                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-                metrics=['accuracy'])
-            model.fit(dataset.batch(32), epochs=10)
+ 
+            thread = threading.Thread(target=create_model,args=(dataset,))
+            thread.start()
+            print("traing")
 
 
 
