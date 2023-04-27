@@ -1,17 +1,8 @@
 from django import forms
 
-class ImageUploadForm(forms.Form):
-    CNV = 'CNV'
-    DME = 'DME'
-    DRUSEN = 'DRUSEN'
-    NORMAL = 'NORMAL'
-    CLASS_CHOICES = [
-        (CNV, 'CNV'),
-        (DME, 'DME'),
-        (DRUSEN, 'DRUSEN'),
-        (NORMAL, 'NORMAL'),
-    ]
-    cnv_image = forms.ImageField(label='CNV Image', required=True)
-    dme_image = forms.ImageField(label='DME Image', required=True)
-    drusen_image = forms.ImageField(label='DRUSEN Image', required=True)
-    normal_image = forms.ImageField(label='NORMAL Image', required=True)
+class MultipleImagesForm(forms.Form):
+    cnv_images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    drusen_images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    normal_images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    dmv_images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+
