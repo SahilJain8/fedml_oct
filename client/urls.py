@@ -1,11 +1,11 @@
 
 from django.urls import path
-from .views import IndexView,upload_images
+from .views import IndexView
 
 urlpatterns = [
    
-    path("",IndexView.as_view()),
-    path("image/",upload_images)
+    path("",IndexView.as_view())
+   
     
    
    
