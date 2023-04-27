@@ -32,17 +32,20 @@ def upload(request):
             dme_image = np.array(Image.open(io.BytesIO(dme_image.read())))
             drusen_image = np.array(Image.open(io.BytesIO(drusen_image.read())))
             normal_image = np.array(Image.open(io.BytesIO(normal_image.read())))
+            cnv_image = tf.image.resize(cnv_image, (224, 224))
+            dme_image = tf.image.resize(dme_image, (224, 224))
+            drusen_image = tf.image.resize(drusen_image, (224, 224))
+            normal_image = tf.image.resize(normal_image, (224, 224))
 
             images = np.stack([cnv_image, dme_image, drusen_image, normal_image], axis=0)
             labels = np.array([0, 1, 2, 3])
-
-            # Create TensorFlow dataset
+            images = images / 255.0
             dataset = tf.data.Dataset.from_tensor_slices((images, labels))
             dataset = dataset.shuffle(buffer_size=len(images))
             dataset = dataset.batch(32)
 
-           
-            print(dataset)
+            for batch in dataset:
+                print(batch)
 
             return HttpResponse("Successfully uploaded images.")
     else:
