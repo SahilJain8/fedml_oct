@@ -1,12 +1,14 @@
 from django.http import HttpResponse
 from django.views import View
 from django.shortcuts import render
-from .forms import ImageUploadForm
+from .forms import MultipleImagesForm
+from .utils import create_image
 import numpy as np
-from PIL import Image
-import io
 import tensorflow as tf
-import numpy as np
+
+
+
+
 
 class IndexView(View):
     def get(self, request):
@@ -15,56 +17,32 @@ class IndexView(View):
 
 
 
-def upload(request):
+def upload_images(request):
     if request.method == 'POST':
-        form = ImageUploadForm(request.POST, request.FILES)
+        form = MultipleImagesForm(request.POST, request.FILES)
         if form.is_valid():
-            cnv_image = form.cleaned_data['cnv_image']
-            dme_image = form.cleaned_data['dme_image']
-            drusen_image = form.cleaned_data['drusen_image']
-            normal_image = form.cleaned_data['normal_image']
+            cnv_images = request.FILES.getlist('cnv_images')
+            drusen_images = request.FILES.getlist('drusen_images')
+            dmv_images  = request.FILES.getlist('dmv_images')
+            normal_images = request.FILES.getlist('normal_images')
+            cnv_data = create_image(cnv_images)
+            drusen_data = create_image(drusen_images)
+            normal_data = create_image(normal_images)
+            dmv_data = create_image(dmv_images)
+            dataset = np.concatenate([cnv_data, drusen_data, normal_data, dmv_data], axis=0)
 
-            # Convert images to numpy arrays
-            cnv_image = np.array(Image.open(io.BytesIO(cnv_image.read())))
-            dme_image = np.array(Image.open(io.BytesIO(dme_image.read())))
-            drusen_image = np.array(Image.open(io.BytesIO(drusen_image.read())))
-            normal_image = np.array(Image.open(io.BytesIO(normal_image.read())))
+            labels = [0] * len(cnv_data) + [1] * len(drusen_data) + [2] * len(normal_data) + [3] * len(dmv_data)
 
-            # Resize the images to 224x224
-            cnv_image = tf.image.resize(cnv_image, (224, 224))
-            dme_image = tf.image.resize(dme_image, (224, 224))
-            drusen_image = tf.image.resize(drusen_image, (224, 224))
-            normal_image = tf.image.resize(normal_image, (224, 224))
+            
+            dataset = tf.data.Dataset.from_tensor_slices((dataset, labels))
+            print(dataset )
 
-            # Normalize the images
-            cnv_image = cnv_image / 255.0
-            dme_image = dme_image / 255.0
-            drusen_image = drusen_image / 255.0
-            normal_image = normal_image / 255.0
 
-            # Create labels for the images
-            cnv_label = np.array([0])
-            dme_label = np.array([1])
-            drusen_label = np.array([2])
-            normal_label = np.array([3])
 
-            # Create TensorFlow datasets for each image
-            cnv_dataset = tf.data.Dataset.from_tensor_slices((cnv_image, cnv_label))
-            dme_dataset = tf.data.Dataset.from_tensor_slices((dme_image, dme_label))
-            drusen_dataset = tf.data.Dataset.from_tensor_slices((drusen_image, drusen_label))
-            normal_dataset = tf.data.Dataset.from_tensor_slices((normal_image, normal_label))
+           
 
-            # Combine the datasets into a single dataset
-            dataset = cnv_dataset.concatenate(dme_dataset).concatenate(drusen_dataset).concatenate(normal_dataset)
-            dataset = dataset.shuffle(buffer_size=4)
-            dataset = dataset.batch(32)
 
-            # Print the dataset
-            for batch in dataset:
-                print(batch)
-
-            # Return response
-            return HttpResponse("Successfully uploaded images.")
+            return HttpResponse('Images uploaded and processed successfully.')
     else:
-        form = ImageUploadForm()
+        form = MultipleImagesForm()
     return render(request, 'client/upload.html', {'form': form})

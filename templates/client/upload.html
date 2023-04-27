@@ -1,40 +1,15 @@
-{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Upload Images</title>
- 
-
-  <link rel="stylesheet"  href="{% static 'css/bootstrap.min.css' %}">
-
-  
+	<title>Upload Images</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
-
-  <div class="container mt-5">
-    <h1>Upload Images</h1>
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      <div class="form-group">
-        <label for="cnv_image">CNV Image:</label>
-        <input type="file" class="form-control-file" id="cnv_image" name="cnv_image" required>
-      </div>
-      <div class="form-group">
-        <label for="dme_image">DME Image:</label>
-        <input type="file" class="form-control-file" id="dme_image" name="dme_image" required>
-      </div>
-      <div class="form-group">
-        <label for="drusen_image">DRUSEN Image:</label>
-        <input type="file" class="form-control-file" id="drusen_image" name="drusen_image" required>
-      </div>
-      <div class="form-group">
-        <label for="normal_image">NORMAL Image:</label>
-        <input type="file" class="form-control-file" id="normal_image" name="normal_image" required>
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-  </div>
-
+	<h1>Upload Images</h1>
+	<form method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+		{{ form.as_p }}
+		<input type="submit" value="Upload">
+	</form>
 </body>
 </html>
