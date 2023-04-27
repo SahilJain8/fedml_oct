@@ -8,12 +8,13 @@ import io
 import tensorflow as tf
 import numpy as np
 
-
-
-
 class IndexView(View):
     def get(self, request):
         return HttpResponse("Hello from the server")
+    
+
+
+
 def upload(request):
     if request.method == 'POST':
         form = ImageUploadForm(request.POST, request.FILES)
@@ -56,7 +57,7 @@ def upload(request):
             # Combine the datasets into a single dataset
             dataset = cnv_dataset.concatenate(dme_dataset).concatenate(drusen_dataset).concatenate(normal_dataset)
             dataset = dataset.shuffle(buffer_size=4)
-            dataset = dataset.batch(batch_size)
+            dataset = dataset.batch(32)
 
             # Print the dataset
             for batch in dataset:
