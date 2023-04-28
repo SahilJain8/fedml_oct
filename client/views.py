@@ -6,6 +6,14 @@ from .utils import create_image,create_model
 import numpy as np
 import tensorflow as tf
 import threading
+from django.shortcuts import render
+import tensorflow as tf
+import numpy as np
+from tensorflow import keras
+from PIL import Image
+from io import BytesIO
+model=keras.models.load_model("client/model.h5")
+classes_name={0:"Choroidal neovascularization",1:"Diabetic macular edema ",2:"Drusen",3:"Normal"}
 
 class IndexView(View):
     def get(self, request):
@@ -42,4 +50,18 @@ async def upload_images(request):
 
 
 def oct(request):
+    if request.method == "POST":
+            img_data = request.FILES['image'].read()
+            img = Image.open(BytesIO(img_data))
+            image= img.resize((160,160))
+            image = np.expand_dims(image, axis=0)
+            image=image/255.
+            predection=model.predict(image)
+            pre=predection.flatten()
+            m=pre.max()
+            pre=list(pre)
+            context = {'prediction': str(classes_name[pre.index(m)])  }
+    
+            return render(request, 'oct.html', context)
+
     return render(request,"oct.html")
