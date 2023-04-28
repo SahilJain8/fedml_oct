@@ -7,18 +7,14 @@ import numpy as np
 import tensorflow as tf
 import threading
 
-
-
-
-
 class IndexView(View):
     def get(self, request):
-        return HttpResponse("Hello from the server")
+        return render(request,"index.html")
     
 
 
 
-def upload_images(request):
+async def upload_images(request):
     if request.method == 'POST':
         form = MultipleImagesForm(request.POST, request.FILES)
         if form.is_valid():
@@ -36,17 +32,10 @@ def upload_images(request):
 
             
             dataset = tf.data.Dataset.from_tensor_slices((dataset, labels))
- 
-            thread = threading.Thread(target=create_model,args=(dataset,))
-            thread.start()
-            print("traing")
+            threading.Thread(target=create_model,args=(dataset,)).start()
+            return render(request,"index.html")
 
-
-
-           
-
-
-            return HttpResponse('Images uploaded and processed successfully.')
+        
     else:
         form = MultipleImagesForm()
     return render(request, 'client/upload.html', {'form': form})

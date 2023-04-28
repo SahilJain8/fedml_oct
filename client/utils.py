@@ -5,6 +5,14 @@ from io import BytesIO
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Flatten, Reshape
+import pickle
+import json
+from pymongo import MongoClient
+client = MongoClient('mongodb+srv://root:6u1jPRiUjEY7G4tx@cluster0.chilgc4.mongodb.net/test')
+db = client['fedml_cor']
+weights_collection = db['client_client_model_weights']
+
+CHUNK_SIZE = 16 * 1024 * 1024
 
 
 
@@ -16,6 +24,11 @@ def create_image(image_byte):
                 np_array = np.resize(np_array,new_shape=(224,224))
                 img_list.append(np_array)
     return img_list
+
+
+
+
+
 
 def create_model(dataset):
     model = Sequential([
@@ -32,6 +45,7 @@ def create_model(dataset):
     model.compile(optimizer='adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
               metrics=['accuracy'])
-
-    model.fit(dataset.batch(32), epochs=10)
-
+    model.fit(dataset.batch(32),epochs=10)
+    weights_array = model.get_weights()
+  
+    weights_collection.insert_one({"model_weights":weights_array[0].tobytes(),"id":1000})
