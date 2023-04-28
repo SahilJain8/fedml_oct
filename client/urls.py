@@ -1,11 +1,13 @@
 
 from django.urls import path
-from .views import IndexView,upload_images
+from .views import IndexView,upload_images,oct
 
 urlpatterns = [
    
-    path("",IndexView.as_view()),
-    path("image/",upload_images)
+    path("",IndexView.as_view(),name='home'),
+    path("image/",upload_images,name="upload_image"),
+    path("oct/",oct,name="oct"),
+   
    
     
    

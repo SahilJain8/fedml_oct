@@ -39,3 +39,7 @@ async def upload_images(request):
     else:
         form = MultipleImagesForm()
     return render(request, 'client/upload.html', {'form': form})
+
+
+def oct(request):
+    return render(request,"oct.html")
