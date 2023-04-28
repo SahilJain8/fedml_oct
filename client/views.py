@@ -65,3 +65,6 @@ def oct(request):
             return render(request, 'oct.html', context)
 
     return render(request,"oct.html")
+
+def contact(request):
+     return render(request,'contacts.html')
