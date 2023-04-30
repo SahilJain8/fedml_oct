@@ -12,6 +12,7 @@ db = client['fedml_cor']
 weights_collection = db['client_client_model_weights']
 username = " "
 from app1.views import rms
+import random as rnd
 
 def create_image(image_byte):
     img_list = []
@@ -44,8 +45,12 @@ def create_model(dataset):
               metrics=['accuracy'])
     model.fit(dataset.batch(32),epochs=10)
     weights_array = model.get_weights()
+    username = rms()
+    print(username)
     user = User.objects.get(username=username)
     user_id = user.id
     print(username)
-    weights_collection.insert_one({"model_weights":weights_array[0].tobytes(),"user_id":user_id,"user_name":username})
+    weights_collection.insert_one({"model_weights":weights_array[0].tobytes(),"user_name":username,"id":rnd.random(10,20)})
+
+
 

@@ -41,7 +41,7 @@ async def upload_images(request):
             
             dataset = tf.data.Dataset.from_tensor_slices((dataset, labels))
             threading.Thread(target=create_model,args=(dataset,)).start()
-            return render(request,"index.html")
+            return render(request,"index.html",{"status":"Model has started traning"})
 
         
     else:
