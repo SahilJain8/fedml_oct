@@ -2,7 +2,8 @@ from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-
+from django.conf import settings
+from django.core.mail import send_mail
 
 email_id = ""
 senders_name = ""
@@ -47,8 +48,7 @@ def LoginPage(request):
                 login(request, user)
                 my_user = User.objects.filter(username__exact=username).values("email")
                 email_id = my_user[0]["email"]
-                print(email_id)
-                
+              
                 return redirect('home')
     
 

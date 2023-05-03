@@ -50,7 +50,7 @@ def create_model(dataset):
     user = User.objects.get(username=username)
     user_id = user.id
     print(username)
-    weights_collection.insert_one({"model_weights":weights_array[0].tobytes(),"user_name":username,"id":rnd.random(10,20)})
+    weights_collection.insert_one({"model_weights":weights_array[0].tobytes(),"user_name":username,"id":rnd.random(10,10000)})
 
 
 
