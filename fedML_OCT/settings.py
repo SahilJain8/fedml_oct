@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'client',
-    'app1'
+    # 'app1'
  
  
 ]
@@ -85,7 +85,7 @@ DATABASES = {
         'ENGINE': 'djongo',
         'NAME': 'fedml_cor',
         'CLIENT': {
-            'host': os.getenv('DATABASE_HOST')
+            'host': 'mongodb+srv://doadmin:y2Z3X0vSt4r568w7@db-mongodb-blr1-09187-cfe31e33.mongo.ondigitalocean.com/admin?tls=true&authSource=admin&replicaSet=db-mongodb-blr1-09187'
           
             
         },
