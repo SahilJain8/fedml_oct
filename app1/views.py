@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.core.mail import send_mail
 
-email_id = ""
+email_id_user = ""
 senders_name = ""
 use_name = ""
 
@@ -13,7 +13,7 @@ use_name = ""
 # Create your views here.
 @login_required(login_url='login')
 def HomePage(request):
-    print(email_id)
+
     return render(request, 'index.html')
 
 
@@ -36,19 +36,20 @@ def SignupPage(request):
 
 
 def LoginPage(request):
-    global email_id, senders_name,use_name
+    global email_id_user, senders_name,use_name
     if request.method == 'POST':
         username = request.POST.get('username')
         pass1 = request.POST.get('pass')
         user = authenticate(request, username=username, password=pass1)
         use_name = username
+        
         if user is not None:
             if user.is_active:
                 request.session.set_expiry(86400)  # sets the exp. value of the session
                 login(request, user)
                 my_user = User.objects.filter(username__exact=username).values("email")
-                email_id = my_user[0]["email"]
-              
+                email_id_my = my_user[0]["email"]
+                email_id_user = email_id_my
                 return redirect('home')
     
 
@@ -64,5 +65,5 @@ def LogoutPage(request):
 
 
 def rms():
-    return use_name
+    return use_name,email_id_user
 
