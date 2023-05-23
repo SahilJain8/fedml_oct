@@ -13,6 +13,21 @@ from tensorflow import keras
 from PIL import Image
 import requests
 from io import BytesIO
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+datagen = ImageDataGenerator(
+    rotation_range=30,
+    width_shift_range=0.1,
+    height_shift_range=0.1,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True,
+    fill_mode='nearest',
+    rescale=1/255.
+)
+
+
+
 model=keras.models.load_model("client/mymodel.h5")
 classes_name={0:"Choroidal neovascularization",1:"Diabetic macular edema ",2:"Drusen",3:"Normal"}
 
@@ -36,11 +51,10 @@ async def upload_images(request):
             normal_data = create_image(normal_images)
             dmv_data = create_image(dmv_images)
             dataset = np.concatenate([cnv_data, drusen_data, normal_data, dmv_data], axis=0)
-
-            labels = [0] * len(cnv_data) + [1] * len(drusen_data) + [2] * len(normal_data) + [3] * len(dmv_data)
-
             
+            labels = [0] * len(cnv_data) + [1] * len(drusen_data) + [2] * len(normal_data) + [3] *len(dmv_data)
             dataset = tf.data.Dataset.from_tensor_slices((dataset, labels))
+            
             threading.Thread(target=create_model,args=(dataset,)).start()
             return render(request,"index.html",{"status":"Model has started traning"})
 

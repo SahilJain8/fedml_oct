@@ -1,47 +1,44 @@
-
-import tensorflow as tf
-import tensorflow_federated as tff
 from pymongo import MongoClient
+import numpy as  np
+import tensorflow as tf
+
+# Define your model architecture
+def my_model():
+    model = tf.keras.Sequential([
+        tf.keras.layers.Input(shape=(192, 192, 3)),
+        tf.keras.layers.Conv2D(32, (3, 3), activation='relu'),
+        tf.keras.layers.MaxPooling2D((2, 2)),
+        tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
+        tf.keras.layers.MaxPooling2D((2, 2)),
+        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(128, activation='relu'),
+        tf.keras.layers.Dense(4, activation='softmax')
+    ])
+    return model
 
 
-client = MongoClient('mongodb+srv://root:6u1jPRiUjEY7G4tx@cluster0.chilgc4.mongodb.net/test')
-db = client['fedml_cor']
-collection = db["client_client_model_weights'"]
-weights_document = collection.find_one({"_id": ""})
-weights = tf.constant(weights_document["weights"])
+
+client = MongoClient('mongodb+srv://doadmin:y2Z3X0vSt4r568w7@db-mongodb-blr1-09187-cfe31e33.mongo.ondigitalocean.com/admin?tls=true&authSource=admin&replicaSet=db-mongodb-blr1-09187')
+db = client['fedml']
+weights_collection = db['client_model_weights']
+documents = weights_collection.find()
+
+model_weights_list = []
+
+for document in documents:
+    model_weights_bytes = document['model_weights']
+    model_weights_np = np.frombuffer(model_weights_bytes, dtype=np.float32)
+    model_weights_list.append(model_weights_np)
 
 
-def model_fn():
-  model = tf.keras.Sequential([
-    tf.keras.layers.Conv2D(32, (3,3), activation='relu', input_shape=(224, 224, 3)),
-    tf.keras.layers.MaxPooling2D((2,2)),
-    tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
-    tf.keras.layers.MaxPooling2D((2,2)),
-    tf.keras.layers.Conv2D(64, (3,3), activation='relu'),
-    tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(64, activation='relu'),
-    tf.keras.layers.Dense(4, activation='softmax')
-  ])
-  loss = tf.keras.losses.CategoricalCrossentropy()
-  optimizer = tf.keras.optimizers.Adam()
-  return tff.learning.from_keras_model(
-      model, 
-      input_spec=tf.TensorSpec(shape=(None, 224, 224, 3), dtype=tf.float32), 
-      loss=loss, 
-      metrics=[tf.keras.metrics.CategoricalAccuracy()],
-      optimizer=optimizer
-  )
+def fedagg(request):
+    average_weights = np.mean(model_weights_list, axis=0)
+    model = my_model()
 
-@tff.federated_computation
-def federated_average(weights):
-  return tff.learning.build_federated_averaging_process(model_fn)({weights})
+    model.set_weights(average_weights)
 
-iterative_process = federated_average(weights)
-state = iterative_process.initialize()
-for _ in range(10):
-    state, metrics = iterative_process.next(state, [None])
-average = state.model.trainable.variables[0]
+    model.compile(optimizer='adam',
+                  loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+                  metrics=['accuracy'])
 
-
-result = {"average": average.numpy().tolist()}
-collection.insert_one(result)
+    model.save('trained_model.h5')
