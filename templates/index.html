@@ -42,7 +42,17 @@
             </div>
         </div>
     </header>
-    <section><p class="prediction" style="font-size: 24px ;text-align: center;">{{ status }}</p></section>
+    <section>
+        {% if status %}
+        <script>
+
+            alert("The model has started tranning Check your mail")
+        </script>
+
+        {% endif %}
+        
+        
+        {% comment %} <p class="prediction" style="font-size: 24px ;text-align: center;">{{ status }}</p></section> {% endcomment %}
     <section>
         <div class="container py-4 py-xl-5" style="padding-top: 22px;margin-top: -83px;">
             <div class="row">
