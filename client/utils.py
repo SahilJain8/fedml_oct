@@ -19,16 +19,10 @@ from app1.views import rms
 
 
 def my_model():
-    model = tf.keras.Sequential([
-        tf.keras.layers.Input(shape=(192, 192, 3)),
-        tf.keras.layers.Conv2D(32, (3, 3), activation='relu'),
-        tf.keras.layers.MaxPooling2D((2, 2)),
-        tf.keras.layers.Conv2D(64, (3, 3), activation='relu'),
-        tf.keras.layers.MaxPooling2D((2, 2)),
-        tf.keras.layers.Flatten(),
-        tf.keras.layers.Dense(128, activation='relu'),
-        tf.keras.layers.Dense(4, activation='softmax')
-    ])
+   
+    model.compile(optimizer='adam',
+    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+    metrics=['accuracy'])
     return model
 
 
@@ -42,21 +36,31 @@ model_weights_list = []
 
 for document in documents:
     model_weights_bytes = document['model_weights']
-    model_weights_np = np.frombuffer(model_weights_bytes, dtype=np.float32)
+    model_weights_np = eval(model_weights_bytes)
+    model_weights_np = np.array(model_weights_np)
     model_weights_list.append(model_weights_np)
 
 
 def fedagg():
     average_weights = np.mean(model_weights_list, axis=0)
-    model = my_model()
-
-    model.set_weights(average_weights)
-
+    model = models.Sequential([
+    Reshape((224, 224, 1), input_shape=(224, 224)),
+    Conv2D(32, (3, 3), activation='relu'),
+    MaxPooling2D((2, 2)),
+    Conv2D(64, (3, 3), activation='relu'),
+    MaxPooling2D((2, 2)),
+    Conv2D(64, (3, 3), activation='relu'),
+    Flatten(),
+    Dense(64, activation='relu'),
+    Dense(4, activation='softmax')
+    ])
     model.compile(optimizer='adam',
                   loss=tf.keras.losses.SparseCategoricalCrossentropy(),
                   metrics=['accuracy'])
 
-    model.save('trained_model.h5')
+
+   
+    model.save('model.h5')
 
 
 
@@ -85,14 +89,16 @@ def create_model(dataset):
     model.compile(optimizer='adam',
     loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
     metrics=['accuracy'])
-    model.fit(dataset.batch(32),epochs=10)
+    history = model.fit(dataset.batch(32),epochs=10)
+    accuracy_history = history.history['accuracy']
+
     weights_array = model.get_weights()
     username,email_id = rms()
-    weights_collection.insert_one({"model_weights":weights_array[0].tobytes(),"user_name":username,"id":unique_id})
+    weights_collection.insert_one({"model_weights":str(weights_array[0].tolist()),"user_name":username,"id":unique_id})
     subject = 'THe model data'
-    acc =0.97
+
     loss = 0.8
-    message = f"Model Accuracy: {acc} \n, ID: {unique_id},Model Loss:{loss}"
+    message = f"Model Accuracy: {accuracy_history[9]} \n, ID: {unique_id},\nModel Loss:{loss}"
     email_from = settings.EMAIL_HOST_USER
     recipient_list = [email_id]
     send_mail( subject, message, email_from, recipient_list )
